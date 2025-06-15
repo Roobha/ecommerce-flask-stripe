@@ -1,158 +1,134 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<title>Python Flask ReplAuth</title>
-<script src="https://replit.com/public/js/repl-auth-v2.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Store</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .product-description {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+
+        .buy-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        .buy-button:hover {
+            background-color: #2980b9;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            color: #7f8c8d;
+            border-top: 1px solid #ecf0f1;
+        }
+    </style>
 </head>
 <body>
-	{% if user_id %}
-	<center>
-  <div class="box">
-    <center>
-    <div class="box-text-auth">
-      <p>
-        Hello, {{ user_name }}! ({{ user_id }})
-      </p>
+    <div class="container">
+        <header>
+            <h1>🛍️ E-Commerce Store</h1>
+            <p class="subtitle">Discover amazing products at great prices</p>
+        </header>
+
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <h2 class="product-name">{{ product.name }}</h2>
+                <p class="product-description">{{ product.description }}</p>
+                <div class="product-price">${{ "%.2f"|format(product.price) }}</div>
+                <form action="/create-checkout-session" method="POST">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <button type="submit" class="buy-button">Buy Now</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+
+        <footer class="footer">
+            <p>Secure payments powered by Stripe (Test Mode)</p>
+        </footer>
     </div>
-  <img src="{{ user_profile_image }}" width="200">
-    <center>
-  </center>
-  </div>
-	{% else %}
-  <center>
-    <center>
-      <div class="box">
-        <div class="box-text">
-            <h1>Hello!</h1>
-        </div>
-        <div class="box-button">
-          <button onclick="LoginWithReplit()"> Login w/ replit</button>
-        </div>
-    </center>
-      </div>
-  </center>
-
-	{% endif %}
 </body>
-<style>
-  html, body {
-  height: 100%;
-  width: 100%;
-  background-color:#121212;
-}
-
-@font-face {
-  font-family: "Font";
-  src: url("https://css.replit.cool/Chess/src/fonts/Poppins-Bold[1].ttf");
-}
-
-h1{
-  font-family:"Font";
-  font-size:75px;
-  color:#00bbf9;
-}
-
-p{
-  font-family:"Font";
-  font-size:22px;
-  color:#00bbf9;
-}
-
-a{
-  font-family:"Font";
-  color:white;
-  font-size:22px;
-  text-decoration:none;
-  cursor:help;
-  text-shadow:2px 2px #00bbf9;
-}
-
-address{
-  font-family:"Font";
-  font-size:18px;
-  text-shadow:2px 2px #00bbf9;
-}
-
-summary{
-  font-family:"Font";
-  font-size:20px;
-  text-shadow:2px 2px #c400fa;
-  transition:0.7s;
-}
-
-details{
-  font-family:"Font";
-  font-size:20px;
-  text-shadow:2px 2px #c400fa;
-}
-
-::placeholder{
-  font-family:"Font";
-  font-size:25px;
-  color:#787878;
-}
-
-button{
-  width:200px;
-  height:55px;
-  font-family:"Trebuchet MS";
-  font-size:25px;
-  box-shadow:4px 4px white;
-  border-color:#00fa79;
-  color:white;
-  background-color:#00fa79;
-  border-radius:5px;
-}
-
-button:hover{
-  font-family:"Trebuchet MS";
-  font-size:25px;
-  background-color:white;
-  box-shadow:4px 4px #00fa79;
-  color:#00fa79;
-  border-radius:5px;
-  border-color:white;
-  transition:0.7s;
-}
-
-button:disabled{
-  font-family:"Trebuchet MS";
-  font-size:25px;
-  background-color:white;
-  box-shadow:4px 4px #00fa79;
-  border-radius:5px;
-  border-color:#121212;
-  cursor:not-allowed;
-  color:white;
-}
-
-.box-position{
-  position:relative;
-}
-  
-.box{
-  width:300px;
-  height:300px;
-  background-color:#495057;
-  border-radius:5px;
-  border-color:white;
-  position:relative;
-  top:150px;
-}
-
-.box-text{
-  position:relative;
-  top:60px;
-}
-
-.box-button{
-  position:relative;
-  top:20px;
-}
-
-.box-text-auth{
-  position:relative;
-  top:10px;
-}
-</style>
 </html>
