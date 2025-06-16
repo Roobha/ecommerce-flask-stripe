@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
 import stripe
 import os
-from dotenv import load_dotenv   # ✅ ADD THIS LINE
+from dotenv import load_dotenv   
 
-load_dotenv()                    # ✅ AND THIS LINE
+load_dotenv()                    
 
 app = Flask(__name__)
 
